@@ -1,35 +1,22 @@
-// attribute vec4 aPosition;
-
 precision mediump float;
-attribute vec2 vPosition;
+
+attribute vec3 vPosition;
 attribute vec3 vColor;
+attribute vec3 vNormal;
+
 varying vec3 fColor;
-uniform float theta;
+varying vec3 fNormal;
+varying vec3 fPosition;
+
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat3 normalMatrix; 
 
 void main() {
-  fColor = vColor; 
+  gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vPosition, 1.0);
 
-  mat4 translate = mat4(
-    1.0, 0.0, 0.0, -0.7,
-    0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0
-  );
-
-  mat4 scale = mat4(
-    0.7, 0.0, 0.0, 0.0,
-    0.0, 0.7, 0.0, 0.0,
-    0.0, 0.0, 0.7, 0.0,
-    0.0, 0.0, 0.0, 1.0
-  );
-
-  mat4 rotate = mat4(
-    cos(theta), -sin(theta), 0.0, 0.0,
-    sin(theta), cos(theta), 0.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0
-  );
-
-  gl_Position = rotate * vec4(vPosition, 0.0, 1.0) * translate * scale;
-  // gl_Position = aPosition;
+  fColor = vColor;
+  fNormal = normalize(normalMatrix * vNormal);
+  fPosition = vec3(modelMatrix * vec4(vPosition, 1.0));
 }
